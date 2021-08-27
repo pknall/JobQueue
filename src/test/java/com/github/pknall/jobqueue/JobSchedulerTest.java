@@ -10,24 +10,30 @@ class JobSchedulerTest {
 
     @Test
     void jobSchedulerNullArgumentTest() {
-        JobScheduler jobScheduler = new JobScheduler();
-        Throwable throwable = assertThrows(NullPointerException.class, () -> jobScheduler.addJobsToList(null));
+        JobExecutor jobScheduler = new JobExecutor();
+        Throwable throwable = assertThrows(NullPointerException.class, () -> jobScheduler.submitJobsForExecution(null));
         assertEquals("Null jobList sent to JobScheduler.addJobsToList()", throwable.getMessage());
     }
 
     @Test
     void jobSchedulerCallableFutureTest() {
-        JobScheduler jobScheduler = new JobScheduler();
+        JobExecutor jobScheduler = new JobExecutor();
         ArrayList<Job> jobs = new ArrayList<>();
         jobs.add(new Job1());
         jobs.add(new Job2());
-        jobScheduler.addJobsToList(jobs);
+        jobScheduler.submitJobsForExecution(jobs);               // Send to Scheduler to Run
 
-        try {
-            Thread.sleep(2000);
-        }
-        catch (Exception ex) {
-
+        for (int i = 0; i < 60; i++) {
+            if (i < 20) jobScheduler.submitJobForExecution(new Job1());
+            try { Thread.sleep(1000); }
+            catch (Exception ex) {
+                System.out.println(ex);
+            }
+            System.out.println("- - - - -");
+            int count = 1;
+            for(Job job : jobScheduler.jobStatus()) {
+                System.out.println(count++ + " : " + job.getStatus());
+            }
         }
 
         for (Job job : jobs) {

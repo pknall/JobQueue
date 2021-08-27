@@ -3,7 +3,7 @@ package com.github.pknall.jobqueue;
 import lombok.Data;
 
 @Data
-public class JobSchedulerConfig {
+public class JobExecutorConfig {
     private int maxThreads = 10;
-    private int launcherThrottleTime = 100;
+    private int launcherThrottleTime = 1000;
 }
